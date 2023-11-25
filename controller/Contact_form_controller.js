@@ -2,7 +2,7 @@ const { format } = require('date-fns');
 const path = require('path');
 const fs_promises = require('fs').promises;
 
-const contact_form_entry_logger = require('../model/contact_form_entry.json'); 
+const contact_form_entry_logger = require('../model/Contact_form_entry.json'); 
 
 const get_contact_entries_handler = (req, res) =>
 {
