@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const contact_form_controller = require('../controller/contact_form_controller');
+const contact_form_controller = require('../controller/Contact_form_controller');
 
 router.route('/')
   .get(contact_form_controller.get_contact_entries_handler)
