@@ -1,6 +1,6 @@
 const { format } = require('date-fns');
 
-const contact_form_entry_logger = require('../model/contact_form_entry'); 
+const contact_form_entry_logger = require('../model/Contact_form_entry'); 
 
 const get_contact_entries_handler = async (req, res) =>
 {
