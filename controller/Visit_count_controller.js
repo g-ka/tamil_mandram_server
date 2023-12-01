@@ -12,7 +12,7 @@ const Visit_count_handler = async (req, res) =>
   if(!req.cookies?.visitor_id)
   {    
     const new_visitor_id = uuid();
-    res.cookie('visitor_id', new_visitor_id, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 12*60*60*1000});
+    res.cookie('visitor_id', new_visitor_id, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 365*24*60*60*1000});
 
     await vc_logger.create({
       id: new_visitor_id,
