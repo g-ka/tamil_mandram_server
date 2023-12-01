@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
 const path = require('path');
 
 const PORT = process.env.PORT || 3500;
@@ -12,6 +13,7 @@ const cookie_parser = require('cookie-parser');
 // Inter-links:
 // 1) Configuration:
 const CORS_options = require('./configuration/CORS_options');
+const mongodb_connection = require('./configuration/Mongodb_connection');
 // 2) Middleware:
 const Credentials = require('./middleware/Credentials');
 const Log_req = require('./middleware/Log_req');
@@ -23,6 +25,9 @@ const announcement_details = require('./routes/Announcement_details');
 const admin_reg = require('./routes/Admin_reg');
 const admin_log = require('./routes/Admin_log');
 const admin_logout = require('./routes/Admin_logout');
+
+// Connect to MongoDB: 
+mongodb_connection();
 
 // Custom middleware for logging the Request method and url:
 app.use(Log_req);
@@ -55,7 +60,12 @@ app.use('/admin_logout', admin_logout);
 
 app.all('*', Unmatched);
 
-app.listen(PORT, () =>
+mongoose.connection.once('open', () =>
 {
-  console.log('The server is running in port: '+PORT);
+  console.log('Connected to MongoDB');
+
+  app.listen(PORT, () =>
+  {
+    console.log('The server is running in port: '+PORT);
+  });
 });

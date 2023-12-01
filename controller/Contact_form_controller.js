@@ -1,14 +1,13 @@
 const { format } = require('date-fns');
-const path = require('path');
-const fs_promises = require('fs').promises;
 
-const contact_form_entry_logger = require('../model/Contact_form_entry.json'); 
+const contact_form_entry_logger = require('../model/contact_form_entry'); 
 
-const get_contact_entries_handler = (req, res) =>
+const get_contact_entries_handler = async (req, res) =>
 {
   if(!req.cookies?.jwt) return res.sendStatus(401);
 
-  return res.status(200).json({ message_list: contact_form_entry_logger });
+  const message_list = await contact_form_entry_logger.find();
+  return res.status(200).json({ message_list });
 };  
 
 const contact_form_handler = async (req, res) =>
@@ -18,22 +17,20 @@ const contact_form_handler = async (req, res) =>
 
   if(!subject || !message) return res.sendStatus(400);
 
-  const length = contact_form_entry_logger.length;
-  const id = length ? contact_form_entry_logger[length-1]?.id + 1 : 1;
-
-  const new_message = {
-    id,
-    name,
-    email,
-    subject,
-    message,
-    "time": date_time
-  };
-  const updated_contact_form_entry_logger = [...contact_form_entry_logger, new_message];
+  const message_list = await contact_form_entry_logger.find();
+  const length = message_list.length;
+  const id = length ? message_list[length-1]?.id + 1 : 1;
 
   try
-  {
-    await fs_promises.writeFile(path.join(__dirname, '../', 'model', 'contact_form_entry.json'), JSON.stringify(updated_contact_form_entry_logger));
+  {    
+    await contact_form_entry_logger.create({
+      id,
+      name,
+      email,
+      subject,
+      message,
+      time: date_time      
+    });
 
     return res.sendStatus(201)
   }
@@ -48,11 +45,10 @@ const delete_contact_entry_handler = async (req, res) =>
   if(!req.params.id) return res.sendStatus(422);
 
   const id = req.params.id;
-  const updated_list = contact_form_entry_logger.filter(entry => entry.id != id);
 
   try
-  {
-    await fs_promises.writeFile(path.join(__dirname, '../', 'model', 'contact_form_entry.json'), JSON.stringify(updated_list));
+  {    
+    await contact_form_entry_logger.deleteOne({id: id});
     return res.sendStatus(204);
   }
   catch(err)
